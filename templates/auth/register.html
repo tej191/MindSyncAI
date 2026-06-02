@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}
+
+Registration
+
+{% endblock %}
+
+{% block content %}
+
+<div class="auth-container">
+
+    <h1>MindSync AI</h1>
+
+    <div class="auth-card">
+
+        <h1>Create Account</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+    {% if messages %}
+
+        {% for category, message in messages %}
+
+            <div class="flash {{ category }}">
+
+                {{ message }}
+
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+{% endwith %}
+
+        <form method="POST">
+
+            <input type="text"
+                   name="username"
+                   placeholder="Enter Username"
+                   required>
+
+            <input type="password"
+                   name="password"
+                   placeholder="Enter Password"
+                   required>
+
+            <button type="submit">
+                Register
+            </button>
+
+        </form>
+
+        <p>
+            Already have an account?
+            <a href="/login">Login</a>
+        </p>
+
+    </div>
+
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="assistant-layout">
+
+    <!-- SIDEBAR -->
+
+    <div class="sidebar">
+
+        <h2>MindSync AI</h2>
+
+        <a href="/clear_chat">
+
+            <button class="clear-btn">
+
+                Clear Chat
+
+            </button>
+
+        </a>
+
+        <div class="chat-history">
+
+            {% for chat in chat_history %}
+
+                {% if chat[0] == "user" %}
+
+                    <div class="history-item">
+
+                        {{ chat[1][:30] }}...
+
+                    </div>
+
+                {% endif %}
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+    <!-- MAIN CHAT -->
+
+    <div class="main-chat">
+
+        <h1>AI Assistant</h1>
+
+        <!-- CHAT BOX -->
+
+        <div class="chat-box" id="chat-box">
+
+            {% for chat in chat_history %}
+
+                {% if chat[0] == "user" %}
+
+                    <div class="user-message">
+
+                        <p>{{ chat[1] }}</p>
+
+                    <span class="chat-time">
+                        {{ chat[2] }}
+                    </span>
+
+                    </div>
+
+                {% else %}
+
+                        <div class="ai-message">
+
+                        <div>
+                             {{ chat[1] | safe }}
+                        </div>
+
+                        <span class="chat-time">
+                                {{ chat[2] }}
+                        </span>
+
+</div>
+
+            {% endif %}
+
+            {% endfor %}
+
+            <div id="loading-message" class="ai-message loading-message">
+
+    <div class="typing-indicator">
+
+        <span></span>
+        <span></span>
+        <span></span>
+
+    </div>
+
+</div>
+        </div>
+
+        <!-- INPUT -->
+
+        <form method="POST"
+      class="chat-form"
+      id="chatForm">
+
+            <textarea
+                name="message"
+                placeholder="Ask MindSync AI..."
+                required>
+            </textarea>
+
+            <button type="submit" id="sendBtn">
+
+                Send
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+
+const chatBox = document.getElementById("chat-box");
+
+chatBox.scrollTop = chatBox.scrollHeight;
+
+const form = document.getElementById("chatForm");
+
+const button = document.getElementById("sendBtn");
+
+const loading =
+document.getElementById("loading-message");
+
+form.addEventListener("submit", () => {
+
+    button.disabled = true;
+
+    button.innerText = "Thinking...";
+
+    loading.style.display = "block";
+
+});
+
+</script>
+
+{% endblock %}
+

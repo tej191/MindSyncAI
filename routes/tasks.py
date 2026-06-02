@@ -1,0 +1,120 @@
+from flask import Blueprint, render_template, request, redirect, session, flash
+import sqlite3
+
+tasks = Blueprint("tasks", __name__)
+
+# ---------------- TASKS ---------------- #
+
+@tasks.route("/tasks", methods=["GET", "POST"])
+def task_page():
+
+    if "username" not in session:
+        return redirect("/login")
+
+    username = session["username"]
+
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+
+    # -------- CREATE TASK TABLE -------- #
+
+    cursor.execute("""
+  CREATE TABLE IF NOT EXISTS tasks(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT,
+    task TEXT,
+    completed INTEGER DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    completed_at TIMESTAMP
+)
+    """)
+
+    # -------- ADD TASK -------- #
+
+    if request.method == "POST":
+
+        task = request.form["task"]
+
+        cursor.execute("""
+        INSERT INTO tasks(username, task)
+        VALUES(?, ?)
+        """, (username, task))
+
+        conn.commit()
+
+        conn.close()
+
+        flash("Task Added Successfully!", "success")
+
+        return redirect("/tasks")
+
+    # -------- FETCH TASKS -------- #
+
+    cursor.execute("""
+    SELECT id, task, completed,
+       created_at, completed_at
+FROM tasks
+WHERE username=?
+ORDER BY id DESC
+    """, (username,))
+
+    task_list = cursor.fetchall()
+
+    conn.close()
+
+    return render_template(
+        "productivity/tasks.html",
+        tasks=task_list
+    )
+# ---------------- COMPLETE TASK ---------------- #
+
+@tasks.route("/complete_task/<int:task_id>")
+def complete_task(task_id):
+
+    if "username" not in session:
+        return redirect("/login")
+    
+    username = session["username"]
+
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+UPDATE tasks
+SET completed=1,
+    completed_at=CURRENT_TIMESTAMP
+WHERE id=? AND username=?
+""", (task_id, username)) 
+
+    conn.commit()
+
+    conn.close()
+
+    flash("Task Completed!", "success")
+
+    return redirect("/tasks")
+
+# ---------------- DELETE TASK ---------------- #
+
+@tasks.route("/delete_task/<int:task_id>")
+def delete_task(task_id):
+
+    if "username" not in session:
+        return redirect("/login")
+
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    DELETE FROM tasks
+    WHERE id=?
+    """, (task_id,))
+
+    conn.commit()
+
+    conn.close()
+
+    flash("Task Deleted!", "success")
+
+    return redirect("/tasks")
+

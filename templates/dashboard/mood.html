@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Mood Tracker</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<nav>
+
+    <div class="logo">MindSync AI</div>
+
+    <ul>
+
+        <li><a href="/">Home</a></li>
+        <li><a href="/dashboard">Dashboard</a></li>
+        <li><a href="/logout">Logout</a></li>
+
+    </ul>
+
+</nav>
+
+<div class="auth-container">
+
+    <div class="auth-card">
+
+        <h1>How Are You Feeling Today?</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    <div class="flash {{ category }}">
+
+                        {{ message }}
+
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+        <form method="POST">
+
+            <select name="mood" required>
+
+                <option value="">
+                    Select Mood
+                </option>
+
+                <option value="Happy">
+                    😊 Happy
+                </option>
+
+                <option value="Focused">
+                    🎯 Focused
+                </option>
+
+                <option value="Tired">
+                    😴 Tired
+                </option>
+
+                <option value="Anxious">
+                    😟 Anxious
+                </option>
+
+                <option value="Motivated">
+                    🚀 Motivated
+                </option>
+
+            </select>
+
+            <button type="submit">
+
+                Save Mood
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- Mood History -->
+
+<section class="entries-section">
+
+    <h2>Your Mood History</h2>
+
+    {% for mood in moods %}
+
+        <div class="entry-card">
+
+            <p>{{ mood[0] }}</p>
+
+            <small>{{ mood[1] }}</small>
+
+        </div>
+
+    {% endfor %}
+
+</section>
+
+</body>
+
+</html>

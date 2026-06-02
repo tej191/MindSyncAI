@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>MindSync AI</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+    <!-- Navbar -->
+
+    <nav>
+
+        <div class="logo">MindSync AI</div>
+
+        <ul>
+
+            <li><a href="/">Home</a></li>
+
+            {% if session.get("username") %}
+
+                <li><a href="/dashboard">Dashboard</a></li>
+
+                <li><a href="/profile">Profile</a></li>
+
+                <li><a href="/logout">Logout</a></li>
+
+            {% else %}
+
+                <li><a href="/login">Login</a></li>
+
+                <li><a href="/register">Register</a></li>
+
+            {% endif %}
+
+        </ul>
+
+    </nav>
+
+    <!-- Flash Messages -->
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            {% for category, message in messages %}
+
+                <div class="flash {{ category }}">
+
+                    {{ message }}
+
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endwith %}
+
+    <!-- Page Content -->
+
+    {% block content %}
+
+    {% endblock %}
+
+</body>
+</html>

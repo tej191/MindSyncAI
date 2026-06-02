@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}
+
+Tasks
+
+{% endblock %}
+
+{% block content %}
+
+
+<div class="auth-container">
+
+    <div class="auth-card">
+
+        <h1>Task Manager</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    <div class="flash {{ category }}">
+
+                        {{ message }}
+
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+        <form method="POST">
+
+            <input type="text"
+                   name="task"
+                   placeholder="Enter new task"
+                   required>
+
+            <button type="submit">
+                Add Task
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+<section class="entries-section">
+
+    <h2>Your Tasks</h2>
+
+    {% for task in tasks %}
+
+        <div class="entry-card">
+
+            {% if task[2] == 1 %}
+        
+            <p class="timestamp">
+
+    Created: {{ task[3] }}
+
+</p>
+
+{% if task[4] %}
+
+    <p class="edited-text">
+
+        Completed: {{ task[4] }}
+
+    </p>
+
+{% endif %}
+    <p style="text-decoration: line-through;
+              color: #94a3b8;">
+
+        {{ task[1] }}
+
+    </p>
+
+{% else %}
+
+    <p>{{ task[1] }}</p>
+
+    <a href="/complete_task/{{ task[0] }}">
+
+        <button class="complete-btn">
+
+            Complete
+
+        </button>
+
+    </a>
+
+{% endif %}
+
+<a href="/delete_task/{{ task[0] }}">
+
+    <button class="delete-btn">
+
+        Delete
+
+    </button>
+
+</a>
+        </div>
+
+    {% endfor %}
+
+</section>
+
+{% endblock %}

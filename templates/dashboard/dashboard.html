@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<!-- Navbar -->
+
+<nav>
+
+    <div class="logo">MindSync AI</div>
+
+    <ul>
+
+        <li><a href="/">Home</a></li>
+
+        <li><a href="/dashboard">Dashboard</a></li>
+
+        <li><a href="/profile">Profile</a></li>
+
+        <li><a href="/logout">Logout</a></li>
+
+    </ul>
+
+</nav>
+
+
+<!-- Dashboard Container -->
+
+<div class="dashboard-container">
+
+    <!-- Welcome -->
+
+    <section class="welcome-section">
+
+        <h1>
+            Welcome {{ username }}
+        </h1>
+
+        <p>
+            You are now logged into MindSync AI 🚀
+        </p>
+
+    </section>
+
+
+    <!-- Flash Messages -->
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            {% for category, message in messages %}
+
+                <div class="flash {{ category }}">
+
+                    {{ message }}
+
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endwith %}
+
+
+    <!-- Stats -->
+
+    <section class="stats-section">
+
+        <div class="stat-card">
+
+            <h2>{{ total_tasks }}</h2>
+
+            <p>Total Tasks</p>
+
+        </div>
+
+        <div class="stat-card">
+
+            <h2>{{ completed_tasks }}</h2>
+
+            <p>Completed Tasks</p>
+
+        </div>
+
+        <div class="stat-card">
+
+            <h2>{{ pending_tasks }}</h2>
+
+            <p>Pending Tasks</p>
+
+        </div>
+
+        <div class="stat-card">
+
+            <h2>{{ journal_count }}</h2>
+
+            <p>Journal Entries</p>
+
+        </div>
+
+    </section>
+
+    <section class="insight-section">
+
+    <div class="insight-card">
+
+        <h2>
+            Productivity Insight
+        </h2>
+
+        <p>
+
+            {{ productivity_status }}
+
+        </p>
+
+    </div>
+
+</section>
+
+
+    <!-- Quick Actions -->
+
+    <section class="quick-actions">
+
+        <a href="/journal">
+
+            <button>
+                Open Journal
+            </button>
+
+        </a>
+
+        <a href="/tasks">
+
+            <button>
+                Open Tasks
+            </button>
+
+        </a>
+
+        <a href="/assistant">
+
+    <button>
+        Open AI Assistant
+    </button>
+
+</a>
+
+        <a href="/focus">
+
+            <button>
+                Focus
+            </button>
+
+        </a>
+
+        <a href="/mood">
+
+    <button>
+        Mood Tracker
+    </button>
+
+</a>
+
+    </section>
+
+</div>
+
+</body>
+
+</html>

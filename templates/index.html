@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MindSync AI</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav>
+        <div class="logo">MindSync AI</div>
+
+        <ul>
+
+    <li><a href="/">Home</a></li>
+
+    {% if username %}
+
+        <li><a href="/dashboard">Dashboard</a></li>
+
+        <li><a href="/profile">Profile</a></li>
+
+        <li><a href="/journal">Journal</a></li>
+
+        <li><a href="/tasks">Tasks</a></li>
+         
+        <li><a href="/focus">Focus</a></li>
+
+        <li><a href="/logout">Logout</a></li>
+
+    {% else %}
+
+        <li><a href="/login">Login</a></li>
+
+        <li><a href="/register">Register</a></li>
+
+        
+
+    {% endif %}
+
+</ul>
+    </nav>
+
+
+    <!-- Hero Section -->
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <h1>
+                Productivity Meets Mental Wellness
+            </h1>
+
+            <p>
+                MindSync AI helps students stay productive,
+                focused, goal-oriented, and mentally balanced.
+            </p>
+
+            <div class="buttons">
+                <button class="primary-btn">
+                    Get Started
+                </button>
+
+                <button class="secondary-btn">
+                    Learn More
+                </button>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- Features Section -->
+    <section class="features">
+
+        <div class="card">
+            <h2>Smart Productivity</h2>
+            <p>
+                Organize goals, tasks, and focus sessions intelligently.
+            </p>
+        </div>
+
+        <div class="card">
+            <h2>Career Guidance</h2>
+            <p>
+                Get AI-powered roadmap and skill recommendations.
+            </p>
+        </div>
+
+        <div class="card">
+            <h2>Mental Wellness</h2>
+            <p>
+                Track mood, burnout, and maintain healthy productivity.
+            </p>
+        </div>
+        
+        <div class="card">
+            <h2>Journaling system</h2>
+            <p>
+                Track emotions, reflections, and personal goals through journaling.
+            </p>
+        </div>
+
+    </section>
+
+    <footer>
+
+    <h3>MindSync AI</h3>
+
+    <p>
+        © 2026 ControlConsciousness Company
+    </p>
+
+    <p>
+        Supporting individuals toward clarity,
+balance, productivity, and personal growth.
+    </p>
+
+</footer>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>
