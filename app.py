@@ -2,7 +2,7 @@ from flask import Flask, render_template, session, redirect
 import sqlite3
 from dotenv import load_dotenv
 import os
-load_dotenv()
+load_dotenv(os.path.expanduser("~/.env"))
 from routes.auth import auth
 from routes.profile import profile
 from routes.journal import journal
