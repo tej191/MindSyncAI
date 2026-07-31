@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect
 from flask import session, flash
-import sqlite3
+from db import get_connection
 
 mood = Blueprint("mood", __name__)
 
@@ -14,19 +14,8 @@ def mood_page():
 
     username = session["username"]
 
-    conn = sqlite3.connect("database.db")
+    conn = get_connection()
     cursor = conn.cursor()
-
-    # -------- CREATE TABLE -------- #
-
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS moods(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT,
-        mood TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-    """)
 
     # -------- SAVE MOOD -------- #
 
@@ -36,7 +25,7 @@ def mood_page():
 
         cursor.execute("""
         INSERT INTO moods(username, mood)
-        VALUES(?, ?)
+        VALUES(%s, %s)
         """, (username, selected_mood))
 
         conn.commit()
@@ -52,7 +41,7 @@ def mood_page():
     cursor.execute("""
     SELECT mood, created_at
     FROM moods
-    WHERE username=?
+    WHERE username=%s
     ORDER BY created_at DESC
     """, (username,))
 

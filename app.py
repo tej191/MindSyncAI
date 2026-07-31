@@ -1,8 +1,9 @@
 from flask import Flask, render_template, session, redirect
-import sqlite3
 from dotenv import load_dotenv
 import os
-load_dotenv(os.path.expanduser("~/.env"))
+from db import get_connection, init_db
+
+load_dotenv()
 from routes.auth import auth
 from routes.profile import profile
 from routes.journal import journal
@@ -26,6 +27,8 @@ app.register_blueprint(tasks)
 app.register_blueprint(focus)
 app.register_blueprint(mood)
 app.register_blueprint(assistant)
+
+init_db()
 # ---------------- HOME ---------------- #
 
 @app.route("/")
@@ -48,13 +51,13 @@ def dashboard():
     
     username = session["username"]
     
-    conn = sqlite3.connect("database.db")
+    conn = get_connection()
     cursor = conn.cursor()
 
     cursor.execute("""
 SELECT COUNT(*)
 FROM tasks
-WHERE username=?
+WHERE username=%s
 """, (username,))
     
     total_tasks = cursor.fetchone()[0]
@@ -62,7 +65,7 @@ WHERE username=?
     cursor.execute("""
 SELECT COUNT(*)
 FROM tasks
-WHERE username=? AND completed=1
+WHERE username=%s AND completed=TRUE
 """, (username,))
     
     completed_tasks = cursor.fetchone()[0]
@@ -90,7 +93,7 @@ WHERE username=? AND completed=1
     cursor.execute("""
 SELECT COUNT(*)
 FROM journals
-WHERE username=?
+WHERE username=%s
 """, (username,))
     
     journal_count = cursor.fetchone()[0]

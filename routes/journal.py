@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, session, flash
-import sqlite3
+from db import get_connection
 
 journal = Blueprint("journal", __name__)
 
@@ -13,20 +13,8 @@ def journal_page():
 
     username = session["username"]
 
-    conn = sqlite3.connect("database.db")
+    conn = get_connection()
     cursor = conn.cursor()
-
-    # -------- CREATE JOURNAL TABLE -------- #
-
-    cursor.execute("""
-   CREATE TABLE IF NOT EXISTS journals(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT,
-    content TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP
-)
-    """)
 
     # -------- SAVE JOURNAL ENTRY -------- #
 
@@ -36,7 +24,7 @@ def journal_page():
 
         cursor.execute("""
         INSERT INTO journals(username, content)
-        VALUES(?, ?)
+        VALUES(%s, %s)
         """, (username, content))
 
         conn.commit()
@@ -51,7 +39,7 @@ def journal_page():
     cursor.execute("""
     SELECT id,content, created_at, updated_at
     FROM journals
-    WHERE username=?
+    WHERE username=%s
     ORDER BY created_at DESC
     """, (username,))
 
@@ -74,12 +62,12 @@ def delete_journal(entry_id):
 
     username = session["username"]
 
-    conn = sqlite3.connect("database.db")
+    conn = get_connection()
     cursor = conn.cursor()
 
     cursor.execute("""
     DELETE FROM journals
-    WHERE id=? AND username=?
+    WHERE id=%s AND username=%s
     """, (entry_id, username))
 
     conn.commit()
@@ -101,7 +89,7 @@ def edit_journal(entry_id):
 
     username = session["username"]
 
-    conn = sqlite3.connect("database.db")
+    conn = get_connection()
     cursor = conn.cursor()
 
     # -------- UPDATE ENTRY -------- #
@@ -112,9 +100,9 @@ def edit_journal(entry_id):
 
         cursor.execute("""
         UPDATE journals
-SET content=?,
+SET content=%s,
     updated_at=CURRENT_TIMESTAMP
-WHERE id=? AND username=?
+WHERE id=%s AND username=%s
         """, (updated_content, entry_id, username))
 
         conn.commit()
@@ -130,7 +118,7 @@ WHERE id=? AND username=?
     cursor.execute("""
     SELECT id, content, created_at
     FROM journals
-    WHERE id=? AND username=?
+    WHERE id=%s AND username=%s
     """, (entry_id, username))
 
     entry = cursor.fetchone()

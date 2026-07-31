@@ -1,11 +1,9 @@
-from typing import Any
-
 from flask import Blueprint, render_template, request, session, redirect
-import sqlite3
 import requests
 import markdown
 import os
 from dotenv import load_dotenv
+from db import get_connection
 
 load_dotenv()
 
@@ -21,25 +19,8 @@ def ai_assistant():
 
     username = session["username"]
 
-    conn = sqlite3.connect("database.db")
+    conn = get_connection()
     cursor = conn.cursor()
-
-    # -------- CREATE CHAT TABLE -------- #
-
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS chat_messages(
-
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-        username TEXT,
-
-        role TEXT,
-
-        message TEXT,
-
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-    """)
 
     # -------- USER SENDS MESSAGE -------- #
 
@@ -54,7 +35,7 @@ def ai_assistant():
 
         cursor.execute("""
         INSERT INTO chat_messages(username, role, message)
-        VALUES(?, ?, ?)
+        VALUES(%s, %s, %s)
         """, (username, "user", user_message))
 
         conn.commit()
@@ -64,7 +45,7 @@ def ai_assistant():
         cursor.execute("""
         SELECT role, message
         FROM chat_messages
-        WHERE username=?
+        WHERE username=%s
         ORDER BY id DESC
         LIMIT 10
         """, (username,))
@@ -154,7 +135,7 @@ def ai_assistant():
 
         cursor.execute("""
         INSERT INTO chat_messages(username, role, message)
-        VALUES(?, ?, ?)
+        VALUES(%s, %s, %s)
         """, (username, "ai", ai_message))
 
         conn.commit()
@@ -167,7 +148,7 @@ def ai_assistant():
     cursor.execute("""
     SELECT role, message, created_at
     FROM chat_messages
-    WHERE username=?
+    WHERE username=%s
     ORDER BY id ASC
     """, (username,))
 
@@ -192,12 +173,12 @@ def clear_chat():
 
     username = session["username"]
 
-    conn = sqlite3.connect("database.db")
+    conn = get_connection()
     cursor = conn.cursor()
 
     cursor.execute("""
     DELETE FROM chat_messages
-    WHERE username=?
+    WHERE username=%s
     """, (username,))
 
     conn.commit()

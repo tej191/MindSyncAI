@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, session, flash
-import sqlite3
+from db import get_connection
 
 profile = Blueprint("profile", __name__)
 
@@ -13,7 +13,7 @@ def user_profile():
 
     username = session["username"]
 
-    conn = sqlite3.connect("database.db")
+    conn = get_connection()
     cursor = conn.cursor()
 
     if request.method == "POST":
@@ -23,8 +23,8 @@ def user_profile():
 
         cursor.execute("""
         UPDATE users
-        SET bio=?, goal=?
-        WHERE username=?
+        SET bio=%s, goal=%s
+        WHERE username=%s
         """, (bio, goal, username))
 
         conn.commit()
@@ -33,7 +33,7 @@ def user_profile():
 
     cursor.execute("""
     SELECT bio, goal FROM users
-    WHERE username=?
+    WHERE username=%s
     """, (username,))
 
     user = cursor.fetchone()

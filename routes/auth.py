@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, flash, session
-import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
+from db import get_connection
 
 auth = Blueprint("auth", __name__)
 
@@ -16,22 +16,12 @@ def register():
 
         hashed_password = generate_password_hash(password)
 
-        conn = sqlite3.connect("database.db")
+        conn = get_connection()
         cursor = conn.cursor()
 
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS users(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT,
-            password TEXT,
-            bio TEXT,
-            goal TEXT
-        )
-        """)
-
-        cursor.execute("""
         INSERT INTO users(username, password)
-        VALUES(?, ?)
+        VALUES(%s, %s)
         """, (username, hashed_password))
 
         conn.commit()
@@ -54,12 +44,12 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
 
-        conn = sqlite3.connect("database.db")
+        conn = get_connection()
         cursor = conn.cursor()
 
         cursor.execute("""
         SELECT * FROM users
-        WHERE username=?
+        WHERE username=%s
         """, (username,))
 
         user = cursor.fetchone()

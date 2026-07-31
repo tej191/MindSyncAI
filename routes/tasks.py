@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, session, flash
-import sqlite3
+from db import get_connection
 
 tasks = Blueprint("tasks", __name__)
 
@@ -13,21 +13,8 @@ def task_page():
 
     username = session["username"]
 
-    conn = sqlite3.connect("database.db")
+    conn = get_connection()
     cursor = conn.cursor()
-
-    # -------- CREATE TASK TABLE -------- #
-
-    cursor.execute("""
-  CREATE TABLE IF NOT EXISTS tasks(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT,
-    task TEXT,
-    completed INTEGER DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    completed_at TIMESTAMP
-)
-    """)
 
     # -------- ADD TASK -------- #
 
@@ -37,7 +24,7 @@ def task_page():
 
         cursor.execute("""
         INSERT INTO tasks(username, task)
-        VALUES(?, ?)
+        VALUES(%s, %s)
         """, (username, task))
 
         conn.commit()
@@ -54,7 +41,7 @@ def task_page():
     SELECT id, task, completed,
        created_at, completed_at
 FROM tasks
-WHERE username=?
+WHERE username=%s
 ORDER BY id DESC
     """, (username,))
 
@@ -76,14 +63,14 @@ def complete_task(task_id):
     
     username = session["username"]
 
-    conn = sqlite3.connect("database.db")
+    conn = get_connection()
     cursor = conn.cursor()
 
     cursor.execute("""
 UPDATE tasks
-SET completed=1,
+SET completed=TRUE,
     completed_at=CURRENT_TIMESTAMP
-WHERE id=? AND username=?
+WHERE id=%s AND username=%s
 """, (task_id, username)) 
 
     conn.commit()
@@ -102,13 +89,13 @@ def delete_task(task_id):
     if "username" not in session:
         return redirect("/login")
 
-    conn = sqlite3.connect("database.db")
+    conn = get_connection()
     cursor = conn.cursor()
 
     cursor.execute("""
     DELETE FROM tasks
-    WHERE id=?
-    """, (task_id,))
+    WHERE id=%s AND username=%s
+    """, (task_id, session["username"]))
 
     conn.commit()
 
